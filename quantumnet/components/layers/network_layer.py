@@ -175,8 +175,8 @@ class NetworkLayer:
                 # Adiciona o par EPR virtual ao canal entre node1 e node3
                 self._network.physical.add_epr_to_channel(epr_virtual, (node1, node3))
                 # Remove os pares EPR antigos dos canais entre node1-node2 e node2-node3
-                self._network.physical.remove_epr_from_channel(epr1, (node1, node2))
-                self._network.physical.remove_epr_from_channel(epr2, (node2, node3))
+                self._network.physical.remove_epr_from_channel([epr1], (node1, node2))
+                self._network.physical.remove_epr_from_channel([epr2], (node2, node3))
 
                 # Atualiza o contador de EPRs utilizados
                 self.used_eprs += 1
