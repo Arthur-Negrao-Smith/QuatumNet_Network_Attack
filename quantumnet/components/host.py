@@ -16,7 +16,6 @@ class Host():
         self._routing_table[host_id] = [host_id]
         # Sobre a execução
         self.logger = Logger.get_instance()
-        self._routing_table = None
     def __str__(self):
         return f'{self.host_id}'
     
