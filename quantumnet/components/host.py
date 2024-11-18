@@ -14,6 +14,7 @@ class Host():
         self._probability_replay_qubit_create = probability_replay_qubit_create
         self._routing_table = {}
         self._routing_table[host_id] = [host_id]
+        self._prob_entanglement_swapping = None
         # Sobre a execução
         self.logger = Logger.get_instance()
     def __str__(self):
@@ -128,3 +129,6 @@ class Host():
         """
 
         print(f'Host {self.host_id} informou ao controlador que a aplicação terminou.')
+
+    def setEntanglementSwappingProb(self, new_probability: int):
+        self._prob_entanglement_swapping = new_probability
