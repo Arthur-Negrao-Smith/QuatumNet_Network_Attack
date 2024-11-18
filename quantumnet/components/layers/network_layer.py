@@ -108,7 +108,7 @@ class NetworkLayer:
         # Verifica se uma rota válida foi encontrada e se ela tem pelo menos 2 nós
         if route is None or len(route) < 2:
             self.logger.log('Não foi possível determinar uma rota válida.')
-            return False
+            return -1
 
         # Define Alice e Bob como o primeiro e o último nó da rota, respectivamente
         Alice = route[0]
@@ -127,7 +127,7 @@ class NetworkLayer:
             # Verifica se existe um canal entre node1 e node2
             if not self._network.graph.has_edge(node1, node2):
                 self.logger.log(f'Canal entre {node1}-{node2} não existe')
-                return False
+                return -1
 
             try:
                 # Obtém o primeiro par EPR entre node1 e node2
@@ -135,14 +135,14 @@ class NetworkLayer:
             except IndexError:
                 # Se não houver pares EPR suficientes, loga a falha e retorna False
                 self.logger.log(f'Não há pares EPRs suficientes entre {node1}-{node2}')
-                return False
+                return -1
 
             # Se houver um terceiro nó, realiza o swapping entre node1, node2 e node3
             if node3 is not None:
                 # Verifica se existe um canal entre node2 e node3
                 if not self._network.graph.has_edge(node2, node3):
                     self.logger.log(f'Canal entre {node2}-{node3} não existe')
-                    return False
+                    return -1
 
                 try:
                     # Obtém o primeiro par EPR entre node2 e node3
@@ -150,7 +150,7 @@ class NetworkLayer:
                 except IndexError:
                     # Se não houver pares EPR suficientes, loga a falha e retorna False
                     self.logger.log(f'Não há pares EPRs suficientes entre {node2}-{node3}')
-                    return False
+                    return -1
 
                 # Mede a fidelidade dos pares EPR
                 fidelity1 = epr1.get_current_fidelity()
@@ -158,11 +158,24 @@ class NetworkLayer:
                 
                 # Calcula a probabilidade de sucesso do entanglement swapping
                 success_prob = fidelity1 * fidelity2 + (1 - fidelity1) * (1 - fidelity2)
+
+                # irá adicionar uma taxa definida no nó para caso este apresente uma
+                list_prob = [self._network.get_host(node1)._prob_entanglement_swapping, self._network.get_host(node2)._prob_entanglement_swapping, self._network.get_host(node3)._prob_entanglement_swapping]
+                tax = 1
+                for temp_tax in list_prob:
+                    if temp_tax is not None:
+                        tax *= temp_tax
+                success_prob *= tax
                 
                 # Verifica se o swapping foi bem-sucedido com base na probabilidade de sucesso
                 if uniform(0, 1) > success_prob:
                     self.logger.log(f'Entanglement Swapping falhou entre {node1}-{node2} e {node2}-{node3}')
-                    return False
+                    # Remove os pares Eprs utilizados
+                    self._network.physical.remove_epr_from_channel([epr1], (node1, node2))
+                    self._network.physical.remove_epr_from_channel([epr2], (node2, node3))
+                    # Atualiza o contador de Eprs utilizados
+                    self.used_eprs += 2
+                    return 0
 
                 # Calcula a nova fidelidade do par EPR virtual
                 new_fidelity = (fidelity1 * fidelity2) / ((fidelity1 * fidelity2) + (1 - fidelity1) * (1 - fidelity2))
@@ -179,7 +192,7 @@ class NetworkLayer:
                 self._network.physical.remove_epr_from_channel([epr2], (node2, node3))
 
                 # Atualiza o contador de EPRs utilizados
-                self.used_eprs += 1
+                self.used_eprs += 2
 
                 # Remove o segundo nó da rota, pois o swapping foi realizado
                 route.pop(1)
@@ -189,7 +202,7 @@ class NetworkLayer:
 
         # Loga o sucesso do entanglement swapping
         self.logger.log(f'Entanglement Swapping concluído com sucesso entre {Alice} e {Bob}')
-        return True
+        return 1
 
     def get_avg_size_routes(self):
         """
