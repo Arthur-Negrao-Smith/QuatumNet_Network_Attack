@@ -24,6 +24,7 @@ class Network():
         # Sobre a execução
         self.logger = Logger.get_instance()
         self.count_qubit = 0
+        self.timeslot_decoherence = False
         #minimo e maximo
         self.max_prob = 1
         self.min_prob = 0.2
@@ -287,7 +288,8 @@ class Network():
         Incrementa o timeslot da rede.
         """
         self.timeslot_total += 1
-        self.apply_decoherence_to_all_layers()
+        if self.timeslot_decoherence:
+            self.apply_decoherence_to_all_layers()
 
     def get_timeslot(self):
         """
@@ -399,6 +401,15 @@ class Network():
                 return metrics
             else:
                 raise ValueError("Tipo de saída inválido. Escolha entre 'print', 'csv' ou 'variable'.")
+
+    def active_timeslote_decoherence(self, active: bool = False) -> None:
+        """
+        Ativa ou Desativa a decoerência da rede a cada timeslot
+
+        Args:
+            active: Indica se deve ou não ativar a decoerência
+        """
+        self.timeslot_decoherence = active
 
     def apply_decoherence_to_all_layers(self, decoherence_factor: float = 0.9):
         """
