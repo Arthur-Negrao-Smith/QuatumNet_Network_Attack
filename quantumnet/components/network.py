@@ -165,6 +165,16 @@ class Network():
         """
         return self._hosts[host_id]
 
+    def get_all_hosts(self) -> dict:
+        """
+        Retorna todos os hosts da rede
+
+        Returns:
+            Hosts: retorna um dicionário com todos os hosts
+        """
+        sorted_hosts = {key: value for key, value in sorted(self._hosts.items())}
+        return sorted_hosts
+
     def get_eprs(self):
         """
         Cria uma lista de qubits entrelaçados (EPRs) associadas a cada aresta do grafo.
