@@ -165,12 +165,12 @@ class Network():
         """
         return self._hosts[host_id]
 
-    def get_all_hosts(self) -> dict:
+    def get_all_sorted_hosts(self) -> dict:
         """
-        Retorna todos os hosts da rede
+        Retorna todos os hosts da rede de forma organizada por id
 
         Returns:
-            Hosts: retorna um dicionário com todos os hosts
+            Hosts: retorna um dicionário com todos os hosts de forma ordenada
         """
         sorted_hosts = {key: value for key, value in sorted(self._hosts.items())}
         return sorted_hosts
