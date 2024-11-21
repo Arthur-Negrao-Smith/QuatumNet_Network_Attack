@@ -60,9 +60,17 @@ class NetworkLayer:
         if not self._network.graph.has_node(Alice) or not self._network.graph.has_node(Bob):
             self.logger.log(f'Um dos nós ({Alice} ou {Bob}) não existe no grafo.')
             return None
+        
+        
+         #TODO: CRIEI UM FILTRO PARA REMOVER AS ARESTAS QUE FORAM SWAPPED
+            # Filtrar arestas criadas por entanglement swapping
+        filtered_graph = self._network.graph.copy()
+        for edge in list(filtered_graph.edges(data=True)):
+            if edge[2].get('swapped', False):  # Ignorar arestas marcadas como swapped
+                filtered_graph.remove_edge(edge[0], edge[1])
 
         try:
-            all_shortest_paths = list(nx.all_shortest_paths(self._network.graph, Alice, Bob))
+            all_shortest_paths = list(nx.all_shortest_paths(filtered_graph, Alice, Bob))  #TODO: PASSADO COMO ARGUMENTO O FILTRO
         except nx.NetworkXNoPath:
             self.logger.log(f'Sem rota encontrada entre {Alice} e {Bob}')
             return None
@@ -88,8 +96,6 @@ class NetworkLayer:
 
         self.logger.log('Nenhuma rota válida encontrada.')
         return None
-
-
 
     def entanglement_swapping(self, Alice: int = None, Bob: int = None, route: list = None) -> bool:
         """
@@ -182,7 +188,10 @@ class NetworkLayer:
 
                 # Se o canal entre node1 e node3 não existir, adiciona um novo canal
                 if not self._network.graph.has_edge(node1, node3):
-                    self._network.graph.add_edge(node1, node3, eprs=[])
+                    self._network.graph.add_edge(node1, node3, eprs=[], swapped=True)
+                else:
+                    # Caso já exista a aresta, apenas atualiza o atributo swapped
+                    self._network.graph.edges[(node1, node3)]['swapped'] = True   #TODO: ADICIONEI  O SWAPPED AQUI
 
                 # Adiciona o par EPR virtual ao canal entre node1 e node3
                 self._network.physical.add_epr_to_channel(epr_virtual, (node1, node3))
