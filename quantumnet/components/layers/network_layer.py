@@ -91,19 +91,18 @@ class NetworkLayer:
 
 
 
-    def entanglement_swapping(self, Alice: int = None, Bob: int = None) -> bool:
+    def entanglement_swapping(self, Alice: int = None, Bob: int = None, route: list = None) -> bool:
         """
         Realiza o Entanglement Swapping em toda a rota determinada pelo short_route_valid.
         
         args:
             Alice (int, optional): ID do host de origem. Se não fornecido, usa o primeiro nó da rota válida.
             Bob (int, optional): ID do host de destino. Se não fornecido, usa o último nó da rota válida.
+            route (list, required): A rota a qual o host de origem irá se comunicar com o host de destino
                 
         returns:
-            bool: True se todos os Entanglement Swappings foram bem-sucedidos, False caso contrário.
+            int: Retorna 1 em caso de sucesso, 0 em caso de falha e -1 em caso de falha por rota inválida/falta de recursos
         """
-        # Obtém a rota válida entre Alice e Bob usando a função short_route_valid
-        route = self.short_route_valid(Alice, Bob)
         
         # Verifica se uma rota válida foi encontrada e se ela tem pelo menos 2 nós
         if route is None or len(route) < 2:
