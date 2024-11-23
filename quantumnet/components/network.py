@@ -262,7 +262,7 @@ class Network():
         for host_id in self._hosts:
             for i in range(num_qubits):
                 self.physical.create_qubit(host_id, increment_timeslot=False,increment_qubits=False)
-        print("Hosts inicializados")    
+        self.logger.log("Hosts inicializados")    
 
     def start_channels(self):
         """
@@ -276,7 +276,7 @@ class Network():
             self._graph.edges[edge]['prob_on_demand_epr_create'] = random.uniform(self.min_prob, self.max_prob)
             self._graph.edges[edge]['prob_replay_epr_create'] = random.uniform(self.min_prob, self.max_prob)
             self._graph.edges[edge]['eprs'] = list()
-        print("Canais inicializados")
+        self.logger.log("Canais inicializados")
         
     def start_eprs(self, num_eprs: int = 10):
         """
@@ -290,7 +290,7 @@ class Network():
                 epr = self.physical.create_epr_pair(increment_timeslot=False,increment_eprs=False)
                 self._graph.edges[edge]['eprs'].append(epr)
                 self.logger.debug(f'Par EPR {epr} adicionado ao canal.')
-        print("Pares EPRs adicionados")
+        self.logger.log("Pares EPRs adicionados")
 
         
     def timeslot(self):
