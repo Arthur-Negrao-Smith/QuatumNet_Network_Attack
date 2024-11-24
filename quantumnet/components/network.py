@@ -71,6 +71,16 @@ class Network():
         """
         return self._graph.edges()
     
+    @property
+    def topology(self):
+        """
+        Topologia da rede.
+
+        Returns:
+            str: String com o nome da topologia
+        """
+        return self._topology
+
     # Camadas
     @property
     def physical(self):
@@ -225,22 +235,40 @@ class Network():
             **args (int): Argumentos para a topologia. Geralmente, o número de hosts.
         
         """
-        # Nomeia a topologia da rede
-        self._topology = topology_name
-    
         # Cria o grafo da topologia escolhida
-        if topology_name == 'Grade':
+        topology_name = topology_name.lower()
+        if topology_name == 'grade':
             if len(args) != 2:
                 raise Exception('Para a topologia Grade, são necessários dois argumentos.')
             self._graph = nx.grid_2d_graph(*args)
-        elif topology_name == 'Linha':
+        elif topology_name == 'linha':
             if len(args) != 1:
                 raise Exception('Para a topologia Linha, é necessário um argumento.')
             self._graph = nx.path_graph(*args)
-        elif topology_name == 'Anel':
+        elif topology_name == 'anel':
             if len(args) != 1:
                 raise Exception('Para a topologia Anel, é necessário um argumento.')
             self._graph = nx.cycle_graph(*args)
+        elif topology_name == 'er':
+            if len(args) != 2:
+                raise Exception('Para a topologia Erdős–Rényi, são necessários dois argumentos')
+            self._graph = nx.erdos_renyi_graph(*args)
+        elif topology_name == 'ba':
+            if len(args) != 2:
+                raise Exception('Para a topologia Baraba-Albert, são necessários dois argumentos')
+            self._graph = nx.barabasi_albert_graph(*args)
+        else:
+            raise Exception('O simulador não conta com a topologia selecionada')
+
+        # Nomeia a topologia da rede
+        topology_dict = {
+                'grade':'Grade',
+                'linha':'Linha',
+                'anel':'Anel',
+                'ba':'Baraba-Albert',
+                'er':'Erdős–Rényi'
+        }
+        self._topology = topology_dict[topology_name]
 
         # Converte os labels dos nós para inteiros
         self._graph = nx.convert_node_labels_to_integers(self._graph)
