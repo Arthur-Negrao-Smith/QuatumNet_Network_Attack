@@ -14,7 +14,10 @@ class Host():
         self._probability_replay_qubit_create = probability_replay_qubit_create
         self._routing_table = {}
         self._routing_table[host_id] = [host_id]
+        self._Black_Hole = False
         self._prob_entanglement_swapping = None
+        self._prob_target_entanglement_swapping = None
+        self._Black_Hole_target = None
         # Sobre a execução
         self.logger = Logger.get_instance()
     def __str__(self):
@@ -59,6 +62,39 @@ class Host():
         """
         return self._routing_table
     
+    @property
+    def black_hole(self):
+        """
+        Revela se o host é um Black Hole
+        """
+        return self._Black_Hole
+
+    @property
+    def prob_entanglement_swapping(self):
+        """
+        Taxa de sucesso no entanglement swapping do host
+        Returns:
+            float: Taxa de sucesso do entanglement swapping
+        """
+        return self._prob_entanglement_swapping
+    
+    @property
+    def prob_target_entanglement_swapping(self):
+        """
+        Taxa de sucesso no entanglement swapping do host em relação ao alvo
+        Returns:
+            float: Taxa de sucesso do entanglement swapping
+        """
+        return self._prob_target_entanglement_swapping
+    
+    @property
+    def black_hole_target(self):
+        """
+        Alvos que o host deseja afetar o entanglement swapping
+        Returns:
+            list: Lista com os alvos
+        """
+        return self._Black_Hole_target
     
     def get_last_qubit(self):
         """
@@ -130,5 +166,39 @@ class Host():
 
         print(f'Host {self.host_id} informou ao controlador que a aplicação terminou.')
 
-    def setEntanglementSwappingProb(self, new_probability: int):
+    def setBlackHole(self, black_hole: bool) -> None:
+        """
+        Define se o host é um Black Hole
+        """
+
+        self._Black_Hole = black_hole
+
+    def setEntanglementSwappingProb(self, new_probability: float) -> None:
+        """
+        Define uma nova probabilidade de sucesso para o entanglement swapping do host
+
+        Args:
+            new_probability: Float com a nova probabilidade
+        """
+
         self._prob_entanglement_swapping = new_probability
+
+    def setTargetEntanglementSwappingProb(self, new_probability: float) -> None:
+        """
+        Define uma nova probabilidade de sucesso para o entanglement swapping do host com o alvo
+
+        Args:
+            new_probability: Float com a nova probabilidade
+        """
+
+        self._prob_target_entanglement_swapping = new_probability
+
+    def addBlackHoleTarget(self, target: 'Host') -> None:
+        """
+        Adiciona um alvo para o Host atacar durante o entanglement swapping
+        """
+
+        if self._Black_Hole_target == None:
+            self._Black_Hole_target = [target]
+        else:
+            self._Black_Hole_target.append(target)

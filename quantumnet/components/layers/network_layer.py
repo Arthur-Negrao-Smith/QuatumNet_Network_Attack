@@ -2,6 +2,7 @@ import networkx as nx
 from quantumnet.components import Host
 from quantumnet.objects import Logger, Epr
 from random import uniform
+from copy import copy
 
 class NetworkLayer:
     def __init__(self, network, link_layer, physical_layer):
@@ -110,6 +111,9 @@ class NetworkLayer:
             int: Retorna 1 em caso de sucesso, 0 em caso de falha e -1 em caso de falha por rota inválida/falta de recursos
         """
         
+        # Salva a rota original
+        initial_route = copy(route)
+
         # Verifica se uma rota válida foi encontrada e se ela tem pelo menos 2 nós
         if route is None or len(route) < 2:
             self.logger.log('Não foi possível determinar uma rota válida.')
@@ -164,8 +168,22 @@ class NetworkLayer:
                 # Calcula a probabilidade de sucesso do entanglement swapping
                 success_prob = fidelity1 * fidelity2 + (1 - fidelity1) * (1 - fidelity2)
 
+                # Lista dos nós da que vão realizar o entanglement
+                list_nodes = [self._network.get_host(node1), self._network.get_host(node2), self._network.get_host(node3)]
+
                 # irá adicionar uma taxa definida no nó para caso este apresente uma
-                list_prob = [self._network.get_host(node1)._prob_entanglement_swapping, self._network.get_host(node2)._prob_entanglement_swapping, self._network.get_host(node3)._prob_entanglement_swapping]
+                list_prob = []
+
+                # Se for bha e a Alice for o target, então alterar a fidelidade, se não, deixa como está
+                for node in list_nodes:
+                    node_target = node.black_hole_target
+                    if node_target == None:
+                        node_target = []
+                    if node.black_hole and self._network.get_host(Alice).host_id in node_target:
+                        list_prob.append(node.prob_target_entanglement_swapping)
+                    else:
+                        list_prob.append(node.prob_entanglement_swapping)
+
                 tax = 1
                 for temp_tax in list_prob:
                     if temp_tax is not None:
