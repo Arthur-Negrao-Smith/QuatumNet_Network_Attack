@@ -2,7 +2,6 @@ import networkx as nx
 from quantumnet.components import Host
 from quantumnet.objects import Logger, Epr
 from random import uniform
-from copy import copy
 
 class NetworkLayer:
     def __init__(self, network, link_layer, physical_layer):
@@ -110,9 +109,6 @@ class NetworkLayer:
         returns:
             int: Retorna 1 em caso de sucesso, 0 em caso de falha e -1 em caso de falha por rota inválida/falta de recursos
         """
-        
-        # Salva a rota original
-        initial_route = copy(route)
 
         # Verifica se uma rota válida foi encontrada e se ela tem pelo menos 2 nós
         if route is None or len(route) < 2:
@@ -179,7 +175,7 @@ class NetworkLayer:
                     node_target = node.black_hole_target
                     if node_target == None:
                         node_target = []
-                    if node.black_hole and self._network.get_host(Alice).host_id in node_target:
+                    if node.black_hole and self._network.get_host(Alice) in node_target:
                         list_prob.append(node.prob_target_entanglement_swapping)
                     else:
                         list_prob.append(node.prob_entanglement_swapping)
