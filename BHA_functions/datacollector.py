@@ -1,6 +1,4 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
 
 class DataCollector:
     """
@@ -11,6 +9,7 @@ class DataCollector:
     """
     def __init__(self, dataFrame: pd.DataFrame = None) -> None:
         self.df: pd.DataFrame = dataFrame
+        self.standard_deviations: dict = {}
 
     def is_DataFrame(
             self, 
