@@ -106,7 +106,9 @@ class DataCollector:
             # Square root of variance
             standard_deviations[column] = [variance ** 0.5]
 
-        return standard_deviations
+        self.standard_deviations = standard_deviations
+
+        return self.standard_deviations
 
     def save(
             self, 
