@@ -73,6 +73,6 @@ class GraphicGenerator:
             self.axes[plot_name].set_title(title)
         
         self.axes[plot_name].set_xlabel(x_label)
-        self.ax[plot_name].set_ylabel(y_label)
+        self.axes[plot_name].set_ylabel(y_label)
 
         plt.show()

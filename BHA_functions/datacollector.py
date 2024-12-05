@@ -104,7 +104,7 @@ class DataCollector:
             
             variance /= number_items
             # Square root of variance
-            standard_deviations[column] = variance ** 0.5
+            standard_deviations[column] = [variance ** 0.5]
 
         return standard_deviations
 
@@ -112,13 +112,13 @@ class DataCollector:
             self, 
             file_name: str, 
             save_standard_deviation: bool = None, 
-            standard_columns: list = None
+            standard_columns: tuple = None
             ) -> None:
         """
         Will save all data from DataCollector on files
 
         Args:
-            file_name (required): Name of the file to be saved
+            file_name (required): Name of the file to be saved (without .extension)
             save_standard_deviation (optional): If True, save the standard deviations
             standard_columns (optional): Columns of DataFrame to be save
         """
@@ -126,15 +126,12 @@ class DataCollector:
         self.is_DataFrame(self.df)
 
         # Save DataFrame on csv file
-        self.df.to_csv(F'{file_name}.csv', encoding='utf-8', header=True, index=True)
+        self.df.to_csv(f'{file_name}.csv', encoding='utf-8', header=True, index=True)
 
         if save_standard_deviation:
-            standard_deviations = self.standard_Deviation(*standard_columns)
-            with open(f"{file_name}_standard_deviations.txt", mode='+w', encoding='utf-8') as file:
-                for column, standard_deviation in standard_deviations.items():
-                    file.write(f"{column}:{standard_deviation}\n")
-
-
+            standard_deviations = pd.DataFrame(self.standard_Deviation(*standard_columns))
+            standard_deviations.to_csv(f'{file_name}_standard_deviations.csv', encoding='utf-8', header=True, index=False)
+            
 if __name__ == "__main__":
     a = {
         1:[1, 1],
@@ -143,4 +140,4 @@ if __name__ == "__main__":
 
     dataCollector = DataCollector()
     dataCollector.get_DataFrame(a, convert=True)
-    dataCollector.save('test.csv', save_standard_deviation=True, standard_columns=[1, 2])
+    dataCollector.save('test', save_standard_deviation=True, standard_columns=(1, 2))
