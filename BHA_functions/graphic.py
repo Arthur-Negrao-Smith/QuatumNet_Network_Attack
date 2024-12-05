@@ -1,4 +1,4 @@
-from datacollector import DataCollector
+from .datacollector import DataCollector
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -12,6 +12,7 @@ class GraphicGenerator:
     def __init__(self, dataCollectors: tuple[DataCollector]) -> None:
         self.dataCollectors = dataCollectors
         self.axes = dict()
+        self.figs = dict()
 
     def create_new_axis(self, plot_name: str) -> tuple:
         """
@@ -25,8 +26,9 @@ class GraphicGenerator:
         """
         fig, ax = plt.subplots()
         self.axes[plot_name] = ax
+        self.figs[plot_name] = fig
 
-        return self.axes.keys()
+        return self.axes.keys(), self.figs.keys()
 
     def add_on_plot(self, plot_name: str, plot_label: str, x_column: tuple[float, float], y_column_name: str) -> None:
         """
@@ -35,29 +37,26 @@ class GraphicGenerator:
         Args:
             plot_name (required): Keyname of axis
             plot_label (required): Name of plot
-            x_column (required): Tuple with initial value of x and step
+            x_column (required): Tuple with initial value of x, final value of x, step
             y_column_name (required): Name of y column on DataCollector
         """
-        # x_points = []
-        # for i in range(x_column[0], len(self.dataCollectors), x_column[1]):
-        #     x_points.append(i)
-        
         x_points = [
-            i for i in range(x_column[0], len(self.dataCollectors), x_column[1])
+            i for i in np.arange(x_column[0], x_column[1], x_column[2])
             ]
 
         x_points = np.array(x_points)
         
-        # for i, dataCollector in enumerate(self.dataCollectors):
-        #     y_points.append(dataCollector.standard_deviations[y_column])
+        y_points = []
+        for dataCollector in self.dataCollectors:
+            dataCollector.standard_Deviation(y_column_name)
+            y_points.append(dataCollector.standard_deviations[y_column_name])
 
-        y_points = [
-            dataCollector.standard_deviations[y_column_name] for dataCollector in self.dataCollectors
-            ]
-            
+        
         y_points = np.array(y_points)
+        print('AQUI ESTÁ O PRINT', len(x_points), len(y_points))
 
         self.axes[plot_name].plot(x_points, y_points, label=plot_label)
+        self.figs[plot_name].add_axes(self.axes[plot_name])
 
     def show_plot(self, plot_name: str, title: str, x_label: str, y_label: str) -> None:
         """
@@ -75,4 +74,4 @@ class GraphicGenerator:
         self.axes[plot_name].set_xlabel(x_label)
         self.axes[plot_name].set_ylabel(y_label)
 
-        plt.show()
+        self.figs[plot_name].show()
