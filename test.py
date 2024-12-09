@@ -35,7 +35,5 @@ for i in range(0, GRAPHIC_POINTS):
 datacollectors = tuple(datacollectors)
 
 graphicGen = GraphicGenerator(datacollectors)
-keys = graphicGen.create_new_axis('Taxa de Sucesso')
-print(keys)
-graphicGen.add_on_plot('Taxa de Sucesso', 'teste 1', (0.2, 0.5, 0.1), "Success Tax")
+graphicGen.add_on_plot('Taxa de Sucesso', 'teste 1', (0.2, 0.1), "Success Tax")
 graphicGen.show_plot('Taxa de Sucesso', "Taxa de Sucesso", 'Itensidade', "Taxa de sucesso")
