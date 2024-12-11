@@ -9,10 +9,10 @@ class GraphicGenerator:
     Args:
         dataCollectors (required): Is a tuple with all DataCollector to be analyzed
     """
-    def __init__(self, dataCollectors: tuple[DataCollector]) -> None:
-        self.dataCollectors = dataCollectors
+    def __init__(self) -> None:
+        self.dataCollectors: DataCollector = None
 
-    def add_on_plot(self, plot_name: str, plot_label: str, x_column: tuple[float, float], y_column_name: str, y_standard_deviation: bool) -> None:
+    def add_on_plot(self, plot_label: str, x_column: tuple[float, float], y_column_name: str, y_standard_deviation: bool, dc: tuple[DataCollector] = None) -> None:
         """
         Will add data on plot selected
 
@@ -20,8 +20,12 @@ class GraphicGenerator:
             plot_label (required): Name of plot
             x_column (required): Tuple with initial value of x, step
             y_column_name (required): Name of y column on DataCollector
+            dataCollectors (required): Is a tuple with all DataCollector to be analyzed
         """
         y_points = []
+        if dc:
+            self.dataCollectors = dc
+
         for dataCollector in self.dataCollectors:
             dataCollector.standard_Deviation(y_column_name)
             if y_standard_deviation:
@@ -52,6 +56,8 @@ class GraphicGenerator:
         """
         if title != None:
             plt.title(title)
+
+        plt.legend()
         
         plt.xlabel(x_label)
         plt.ylabel(y_label)
