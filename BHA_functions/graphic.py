@@ -12,7 +12,13 @@ class GraphicGenerator:
     def __init__(self) -> None:
         self.dataCollectors: DataCollector = None
 
-    def add_on_plot(self, plot_label: str, x_column: tuple[float, float], y_column_name: str, y_standard_deviation: bool, dc: tuple[DataCollector] = None) -> None:
+    def add_on_plot(
+        self, plot_label: str, 
+        x_column: tuple[float, float], 
+        y_column_name: str, 
+        y_standard_deviation: bool, 
+        dc: tuple[DataCollector] = None, 
+        default_diff: DataCollector = None) -> None:
         """
         Will add data on plot selected
 
@@ -26,12 +32,16 @@ class GraphicGenerator:
         if dc:
             self.dataCollectors = dc
 
+        default_arithmetic_mean = 0 if default_diff == None else default_diff.arithmetic_Mean(y_column_name)[y_column_name]
+        print(default_arithmetic_mean, default_diff)
         for dataCollector in self.dataCollectors:
             dataCollector.standard_Deviation(y_column_name)
-            if y_standard_deviation:
-                y_points.append(dataCollector.standard_deviations[y_column_name])
-            else:
-                y_points.append(dataCollector.arithmetic_Mean(y_column_name)[y_column_name])
+            if not y_standard_deviation:
+                arithmetic_mean = dataCollector.arithmetic_Mean(y_column_name)[y_column_name]
+                y_points.append(arithmetic_mean - default_arithmetic_mean)
+                continue
+
+            y_points.append(dataCollector.standard_deviations[y_column_name])
 
         x_points = []
         temp_x = x_column[0]
