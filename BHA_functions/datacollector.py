@@ -56,7 +56,7 @@ class DataCollector:
         """
         # Checks if is a valid path
         if type(path) == str:
-            self.df = pd.read_csv(self.file, encoding='utf-8')
+            self.df = pd.read_csv(path, encoding='utf-8')
             return
         raise Exception("Não é um caminho válido")
     
