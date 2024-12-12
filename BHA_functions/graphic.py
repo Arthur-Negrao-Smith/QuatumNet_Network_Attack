@@ -5,9 +5,6 @@ import numpy as np
 class GraphicGenerator:
     """
     A graphic render to plot data
-
-    Args:
-        dataCollectors (required): Is a tuple with all DataCollector to be analyzed
     """
     def __init__(self) -> None:
         self.dataCollectors: DataCollector = None
@@ -27,13 +24,15 @@ class GraphicGenerator:
             x_column (required): Tuple with initial value of x, step
             y_column_name (required): Name of y column on DataCollector
             dataCollectors (required): Is a tuple with all DataCollector to be analyzed
+            y_standard_deviation (optional): If True, the standard deviation will be used
+            dc (required): Tuple with all DataCollectors
+            default_diff (optional): Pass the network without black holes to compare, if None don't affect the result
         """
         y_points = []
         if dc:
             self.dataCollectors = dc
 
         default_arithmetic_mean = 0 if default_diff == None else default_diff.arithmetic_Mean(y_column_name)[y_column_name]
-        print(default_arithmetic_mean, default_diff)
         for dataCollector in self.dataCollectors:
             dataCollector.standard_Deviation(y_column_name)
             if not y_standard_deviation:
@@ -59,7 +58,6 @@ class GraphicGenerator:
         Will show especific plot selected
 
         Args:
-            plot_name (required): Keyname of axis
             title (required): Title of plot, if None will don't have title
             x_label (required): Label of x axis
             y_label (required): Label of y axis
