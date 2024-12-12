@@ -37,7 +37,7 @@ class GraphicGenerator:
             dataCollector.standard_Deviation(y_column_name)
             if not y_standard_deviation:
                 arithmetic_mean = dataCollector.arithmetic_Mean(y_column_name)[y_column_name]
-                y_points.append(arithmetic_mean - default_arithmetic_mean)
+                y_points.append(default_arithmetic_mean - arithmetic_mean)
                 continue
 
             y_points.append(dataCollector.standard_deviations[y_column_name])
