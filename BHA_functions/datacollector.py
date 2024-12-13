@@ -143,3 +143,60 @@ if __name__ == "__main__":
     dataCollector = DataCollector()
     dataCollector.get_DataFrame(a, convert=True)
     dataCollector.save('test', save_standard_deviation=True, standard_columns=(1, 2))
+
+
+class DataGroup:
+    def __init__(self):
+        self._group: dict = dict()
+
+    def __getitem__(self, key) -> tuple:
+        return self._group[key]
+    
+    def __setitem__(self, key, value):
+        self._group[key] = value
+    
+    def __len__(self) -> int:
+        return len(self._group)
+
+    def __str__(self) -> str:
+        return f'{self._group}'
+    
+    def _isTuple(self, value) -> TypeError:
+        if type(value) != tuple:
+            raise TypeError("The given value is not a Tuple")
+        
+    def _isDataCollector(self, value) -> TypeError:
+        if type(value) != DataCollector:
+            raise TypeError("The given value is not a DataCollector")
+
+    def add_Group(self, value: tuple, keygroup) -> dict:
+        """
+        The safest way to add a Tuple of DataCollectors
+        """
+        self._isTuple(value)
+        
+        self._group[keygroup] = value
+        return self._group
+
+    def add_Data(self, value: DataCollector, keygroup) -> dict:
+        """
+        The safest way to add a DataCollector
+        """
+        self._isDataCollector(value)
+
+        if keygroup not in self._group.keys():
+            self._group[keygroup] = (value,)
+            return self._group
+        
+        self._group[keygroup] += (value,)
+        return self._group
+
+if __name__ == '__main__':
+    a = DataGroup()
+    a.add_Group((1, 2, 3), 1)
+    print(a, a[1])
+    a[1] = (1, 2, 4)
+    print(a[1])
+    dc = DataCollector(pd.DataFrame({1:[1, 2], 2:['a', 'b']}))
+    a.add_Data(dc, 2)
+    print(a)
