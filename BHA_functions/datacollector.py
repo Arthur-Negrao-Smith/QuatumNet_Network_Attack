@@ -161,6 +161,13 @@ class DataGroup:
     
     def __len__(self) -> int:
         return len(self._group)
+
+    def __add__(self, value) -> list:
+        if type(value) == type(self):
+            self._group += value._group
+            return self._group
+        
+        raise TypeError(f"{value} is not type DataGroup")
     
     def __iter__(self):
         return self
@@ -270,6 +277,12 @@ if __name__ == '__main__':
 
     a.pop()
     print(a)
+
+    b = DataGroup()
+    b.add_Group((5, 6, 7))
+    print(b)
+
+    print(a + b)
 
     for value in a:
         print(value)
