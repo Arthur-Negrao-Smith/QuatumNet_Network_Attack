@@ -146,17 +146,24 @@ if __name__ == "__main__":
 
 
 class DataGroup:
-    def __init__(self):
+    def __init__(self) -> None:
         self._group: dict = dict()
 
     def __getitem__(self, key) -> tuple:
         return self._group[key]
     
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         self._group[key] = value
     
     def __len__(self) -> int:
         return len(self._group)
+    
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self._iterator == None:
+            raise StopIteration
 
     def __str__(self) -> str:
         return f'{self._group}'
@@ -176,6 +183,7 @@ class DataGroup:
         self._isTuple(value)
         
         self._group[keygroup] = value
+
         return self._group
 
     def add_Data(self, value: DataCollector, keygroup) -> dict:
@@ -189,7 +197,11 @@ class DataGroup:
             return self._group
         
         self._group[keygroup] += (value,)
+
         return self._group
+
+    def pop(self, keyname) -> tuple:
+        return self._group.pop(keyname)
 
 if __name__ == '__main__':
     a = DataGroup()
