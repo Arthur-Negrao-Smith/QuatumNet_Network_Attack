@@ -146,14 +146,18 @@ if __name__ == "__main__":
 
 
 class DataGroup:
+    """
+    Data with all DataCollector to use more efficiently
+    """
     def __init__(self) -> None:
-        self._group: dict = dict()
+        self._group: list = list()
+        self._iterator: int = 0
 
-    def __getitem__(self, key) -> tuple:
-        return self._group[key]
+    def __getitem__(self, index) -> tuple:
+        return self._group[index]
     
-    def __setitem__(self, key, value) -> None:
-        self._group[key] = value
+    def __setitem__(self, index, value) -> None:
+        self._group[index] = value
     
     def __len__(self) -> int:
         return len(self._group)
@@ -162,53 +166,110 @@ class DataGroup:
         return self
     
     def __next__(self):
-        if self._iterator == None:
+        if self._iterator >= len(self._group):
+            self._iterator = 0
             raise StopIteration
+        
+        value = self._group[self._iterator]
+        self._iterator += 1
+
+        return value
 
     def __str__(self) -> str:
         return f'{self._group}'
     
     def _isTuple(self, value) -> TypeError:
+        """
+        Just verify if the value is a tuple
+
+        Args:
+            value (required): Value to be analyzed
+        """
         if type(value) != tuple:
             raise TypeError("The given value is not a Tuple")
         
     def _isDataCollector(self, value) -> TypeError:
+        """
+        Just verify if the value is a DataCollector
+
+        Args:
+            value (required): Value to be analyzed
+        """
         if type(value) != DataCollector:
             raise TypeError("The given value is not a DataCollector")
 
-    def add_Group(self, value: tuple, keygroup) -> dict:
+    def add_Group(self, value: tuple[DataCollector], indexgroup: int = None) -> list:
         """
         The safest way to add a Tuple of DataCollectors
+
+        Args:
+            value (required): Tuple with DataCollectors
+            idexgroup (optional): Index to insert group on especific location
+
+        Returns:
+            list: List with all data
         """
         self._isTuple(value)
         
-        self._group[keygroup] = value
+        if indexgroup == None or indexgroup >= len(self._group):
+            self._group.append(value)
+            return self._group
+
+        self._group.insert(indexgroup, value)
 
         return self._group
 
-    def add_Data(self, value: DataCollector, keygroup) -> dict:
+    def add_Data(self, value: DataCollector, indexgroup: int) -> list:
         """
         The safest way to add a DataCollector
+
+        Args:
+            value (required): DataCollector to add to group
+            indexgroup (required): Index of the group to which the DataCollector will be added
+
+        Returns:
+            list: List with all data
         """
         self._isDataCollector(value)
 
-        if keygroup not in self._group.keys():
-            self._group[keygroup] = (value,)
+        if indexgroup >= len(self._group):
+            self._group.append((value,))
             return self._group
         
-        self._group[keygroup] += (value,)
+        self._group[indexgroup] += (value,)
 
         return self._group
 
-    def pop(self, keyname) -> tuple:
-        return self._group.pop(keyname)
+    def pop(self, indexgroup: int = -1) -> tuple:
+        """
+        Remove group corresponding to index
+
+        Args:
+            indexgroup (required): Index of the group to which will be removed
+
+        Returns:
+            tuple: Return removed tuple
+        """
+        return self._group.pop(indexgroup)
 
 if __name__ == '__main__':
     a = DataGroup()
-    a.add_Group((1, 2, 3), 1)
-    print(a, a[1])
-    a[1] = (1, 2, 4)
-    print(a[1])
+
+    a.add_Group((1, 2, 3))
+    print(a, a[0])
+
+    a[0] = (1, 2, 4)
+    print(a[0])
+
     dc = DataCollector(pd.DataFrame({1:[1, 2], 2:['a', 'b']}))
-    a.add_Data(dc, 2)
+    a.add_Data(dc, 1)
     print(a)
+
+    a.add_Group((3, 4, 5))
+    print(a)
+
+    a.pop()
+    print(a)
+
+    for value in a:
+        print(value)
