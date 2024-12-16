@@ -135,44 +135,47 @@ class DataCollector:
             standard_deviations.to_csv(f'{file_name}_standard_deviations.csv', encoding='utf-8', header=True, index=False)
             
 if __name__ == "__main__":
-    a = {
+    a: dict = {
         1:[1, 1],
         2:[2, 1]
     }
 
-    dataCollector = DataCollector()
+    dataCollector: DataCollector = DataCollector()
     dataCollector.get_DataFrame(a, convert=True)
     dataCollector.save('test', save_standard_deviation=True, standard_columns=(1, 2))
 
 
 class DataGroup:
     """
-    Data with all DataCollector to use more efficiently
+    Data class with all DataCollectors to use more efficiently
     """
     def __init__(self) -> None:
         self._group: list = list()
         self._iterator: int = 0
 
-    def __getitem__(self, index) -> tuple:
+    def __getitem__(self, index: int) -> tuple:
         return self._group[index]
     
-    def __setitem__(self, index, value) -> None:
+    def __setitem__(self, index: int, value: tuple[DataCollector]) -> None:
+        self._isTuple(value)
+
         self._group[index] = value
     
     def __len__(self) -> int:
         return len(self._group)
 
-    def __add__(self, value) -> list:
+    def __add__(self, value: 'DataGroup') -> 'DataGroup':
         if type(value) == type(self):
-            self._group += value._group
-            return self._group
+            temp_dataGroup: DataGroup = DataGroup()
+            temp_dataGroup._group = self._group + value._group
+            return temp_dataGroup
         
         raise TypeError(f"{value} is not type DataGroup")
     
     def __iter__(self):
         return self
     
-    def __next__(self):
+    def __next__(self) -> int:
         if self._iterator >= len(self._group):
             self._iterator = 0
             raise StopIteration
@@ -260,7 +263,7 @@ class DataGroup:
         return self._group.pop(indexgroup)
 
 if __name__ == '__main__':
-    a = DataGroup()
+    a: DataGroup = DataGroup()
 
     a.add_Group((1, 2, 3))
     print(a, a[0])
@@ -268,7 +271,7 @@ if __name__ == '__main__':
     a[0] = (1, 2, 4)
     print(a[0])
 
-    dc = DataCollector(pd.DataFrame({1:[1, 2], 2:['a', 'b']}))
+    dc: DataCollector = DataCollector(pd.DataFrame({1:[1, 2], 2:['a', 'b']}))
     a.add_Data(dc, 1)
     print(a)
 
@@ -278,7 +281,7 @@ if __name__ == '__main__':
     a.pop()
     print(a)
 
-    b = DataGroup()
+    b: DataGroup = DataGroup()
     b.add_Group((5, 6, 7))
     print(b)
 
