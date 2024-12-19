@@ -7,15 +7,15 @@ class GraphicGenerator:
     A graphic render to plot data
     """
     def __init__(self) -> None:
-        self.dataCollectors: DataCollector = None
+        self.dataCollectors: tuple[DataCollector] | None = None
 
     def add_on_plot(
         self, plot_label: str, 
         x_column: tuple[float, float], 
         y_column_name: str, 
         y_standard_deviation: bool, 
-        dc: tuple[DataCollector] = None, 
-        default_diff: DataCollector = None) -> None:
+        dc: tuple[DataCollector] | None = None, 
+        default_diff: DataCollector | None = None) -> None:
         """
         Will add data on plot selected
 

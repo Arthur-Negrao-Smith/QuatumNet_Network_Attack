@@ -135,7 +135,7 @@ class DataCollector:
             standard_deviations.to_csv(f'{file_name}_standard_deviations.csv', encoding='utf-8', header=True, index=False)
             
 if __name__ == "__main__":
-    a: dict = {
+    a: dict[int, list] = {
         1:[1, 1],
         2:[2, 1]
     }
@@ -188,7 +188,7 @@ class DataGroup:
     def __str__(self) -> str:
         return f'{self._group}'
     
-    def _isTuple(self, value) -> TypeError:
+    def _isTuple(self, value) -> None:
         """
         Just verify if the value is a tuple
 
@@ -198,7 +198,7 @@ class DataGroup:
         if type(value) != tuple:
             raise TypeError("The given value is not a Tuple")
         
-    def _isDataCollector(self, value) -> TypeError:
+    def _isDataCollector(self, value) -> None:
         """
         Just verify if the value is a DataCollector
 
@@ -208,7 +208,7 @@ class DataGroup:
         if type(value) != DataCollector:
             raise TypeError("The given value is not a DataCollector")
 
-    def add_Group(self, value: tuple[DataCollector], indexgroup: int = None) -> list:
+    def add_Group(self, value: tuple[DataCollector], indexgroup: int | None = None) -> list:
         """
         The safest way to add a Tuple of DataCollectors
 
