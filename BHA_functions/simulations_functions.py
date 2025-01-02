@@ -465,6 +465,9 @@ def simulation(
         # Add Used Eprs in data
         data["Used Eprs"] = None
 
+        # Add average fidelity of route
+        data["Avg Fidelity Route"] = 0
+
         # Add hash to requests
         data["Requests"] = {}
 
@@ -497,6 +500,9 @@ def simulation(
 
         # Add eprs data
         data["Used Eprs"] = network.get_total_useds_eprs()
+
+        # Collect data of Average fidelity route
+        data["Avg Fidelity Route"] = network.avg_fidelity_route
 
         # Collect to the Data Frame
         data_df = collectDataFrame(data=data, index=data_Frame_index)

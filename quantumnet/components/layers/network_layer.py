@@ -21,6 +21,7 @@ class NetworkLayer:
         self.used_eprs = 0  # Inicializa o contador de EPRs utilizados
         self.used_qubits = 0  # Inicializa o contador de Qubits utilizados
         self.routes_used = {}  # Inicializa o dicionário de rotas usadas 
+
     def __str__(self):
         """ Retorna a representação em string da camada de rede. 
         
@@ -70,29 +71,41 @@ class NetworkLayer:
                 filtered_graph.remove_edge(edge[0], edge[1])
 
         try:
-            all_shortest_paths = list(nx.all_shortest_paths(filtered_graph, Alice, Bob))  #TODO: PASSADO COMO ARGUMENTO O FILTRO
+            shortest_path = list(nx.shortest_path(filtered_graph, Alice, Bob))  # Pegando apenas um melhor caminho
+            fidelities = [] 
+            for i in range(len(shortest_path) - 1): # Coletando as fidelidades da rota
+                epr_pairs = self._network.get_eprs_from_edge(shortest_path[i], shortest_path[i+1])
+                fidelities.extend([epr.get_current_fidelity() for epr in epr_pairs])
+            if fidelities != []:
+                f_route = sum(fidelities) / len(fidelities)
+                # print(f"AQUI AS FIDELIDADES: {fidelities}")
+
+                if self._network.avg_fidelity_route == -1.0:
+                    self._network.avg_fidelity_route = f_route
+                else:
+                    self._network.avg_fidelity_route = (f_route + self._network.avg_fidelity_route) / 2
+
         except nx.NetworkXNoPath:
             self.logger.log(f'Sem rota encontrada entre {Alice} e {Bob}')
             return None
 
-        for path in all_shortest_paths:
-            valid_path = True
-            for i in range(len(path) - 1):
-                node = path[i]
-                next_node = path[i + 1]
-                if len(self._network.get_eprs_from_edge(node, next_node)) < 1:
-                    self.logger.log(f'Sem pares EPRs entre {node} e {next_node} na rota {path}')
-                    valid_path = False
-                    break
+        valid_path = True
+        for i in range(len(shortest_path) - 1):
+            node = shortest_path[i]
+            next_node = shortest_path[i + 1]
+            if len(self._network.get_eprs_from_edge(node, next_node)) < 1:
+                self.logger.log(f'Sem pares EPRs entre {node} e {next_node} na rota {shortest_path}')
+                valid_path = False
+                break
 
             if valid_path:
-                self.logger.log(f'Rota válida encontrada: {path}')
+                self.logger.log(f'Rota válida encontrada: {shortest_path}')
 
                 # Armazena a rota se for a primeira vez que é usada
                 if (Alice, Bob) not in self.routes_used:
-                    self.routes_used[(Alice, Bob)] = path.copy()
+                    self.routes_used[(Alice, Bob)] = shortest_path.copy()
 
-                return path
+                return shortest_path
 
         self.logger.log('Nenhuma rota válida encontrada.')
         return None

@@ -30,6 +30,7 @@ class Network():
         self.min_prob = 0.2
         self.timeslot_total = 0
         self.qubit_timeslots = {}  # Dicionário para armazenar qubits criados e seus timeslots
+        self.avg_fidelity_route: float = -1 # Inicializa a fidelidade média da rota
 
     @property
     def hosts(self):
