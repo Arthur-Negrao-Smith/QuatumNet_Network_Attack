@@ -212,10 +212,8 @@ class PhysicalLayer:
             self.logger.log(f'Timeslot {self._network.get_timeslot()}: O protocolo de criação de emaranhamento foi bem sucedido com a fidelidade necessária.')
             return True
         else:
-            # Adiciona o EPR ao canal mesmo com baixa fidelidade
-            self._network.graph.edges[(alice_host_id, bob_host_id)]['eprs'].append(epr)
             self._failed_eprs.append(epr)
-            self.logger.log(f'Timeslot {self._network.get_timeslot()}: O protocolo de criação de emaranhamento foi bem sucedido, mas com fidelidade baixa.')
+            self.logger.log(f'Timeslot {self._network.get_timeslot()}: O protocolo de criação de emaranhamento foi bem sucedido, mas com fidelidade baixa. Eprs descartados.')
             return False
 
     def echp_on_demand(self, alice_host_id: int, bob_host_id: int):
