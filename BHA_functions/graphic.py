@@ -34,15 +34,17 @@ class GraphicGenerator:
         if dc:
             self.dataCollectors = dc
 
+        temp_error_bar: list = []
+
         default_arithmetic_mean = 0 if default_diff == None else default_diff.arithmetic_Mean(y_column_name)[y_column_name]
         for dataCollector in self.dataCollectors:
-            dataCollector.standard_Deviation(y_column_name)
-            if not y_standard_deviation:
-                arithmetic_mean = dataCollector.arithmetic_Mean(y_column_name)[y_column_name]
-                y_points.append(default_arithmetic_mean - arithmetic_mean)
-                continue
+            arithmetic_mean = dataCollector.arithmetic_Mean(y_column_name)[y_column_name]
+            y_points.append(default_arithmetic_mean - arithmetic_mean)
 
-            y_points.append(dataCollector.standard_deviations[y_column_name])
+            dataCollector.standard_Deviation(y_column_name)
+            
+            if y_standard_deviation:
+                temp_error_bar.append(dataCollector.standard_deviations[y_column_name])
 
         x_points = []
         temp_x = x_column[0]
@@ -54,6 +56,10 @@ class GraphicGenerator:
         y_points = np.array(y_points)
 
         plt.plot(x_points, y_points, label=plot_label, color=color, marker='.')
+
+        if y_standard_deviation:
+            error_bar: np.ndarray = np.array(temp_error_bar)
+            plt.errorbar(x_points, y_points, yerr=error_bar, fmt='.', color=color)
 
     def show_plot(self, title: str, x_label: str, y_label: str) -> None:
         """
