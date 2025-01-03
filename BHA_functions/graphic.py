@@ -10,7 +10,8 @@ class GraphicGenerator:
         self.dataCollectors: tuple[DataCollector]
 
     def add_on_plot(
-        self, plot_label: str, 
+        self, plot_label: str,
+        color: str, 
         x_column: tuple[float, float], 
         y_column_name: str, 
         y_standard_deviation: bool, 
@@ -21,6 +22,7 @@ class GraphicGenerator:
 
         Args:
             plot_label (required): Name of plot
+            color: Color of the plot
             x_column (required): Tuple with initial value of x, step
             y_column_name (required): Name of y column on DataCollector
             dataCollectors (required): Is a tuple with all DataCollector to be analyzed
@@ -51,7 +53,7 @@ class GraphicGenerator:
         x_points = np.array(x_points)
         y_points = np.array(y_points)
 
-        plt.plot(x_points, y_points, label=plot_label)
+        plt.plot(x_points, y_points, label=plot_label, color=color)
 
     def show_plot(self, title: str, x_label: str, y_label: str) -> None:
         """
