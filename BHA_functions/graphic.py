@@ -53,7 +53,7 @@ class GraphicGenerator:
         x_points = np.array(x_points)
         y_points = np.array(y_points)
 
-        plt.plot(x_points, y_points, label=plot_label, color=color)
+        plt.plot(x_points, y_points, label=plot_label, color=color, marker='.')
 
     def show_plot(self, title: str, x_label: str, y_label: str) -> None:
         """
