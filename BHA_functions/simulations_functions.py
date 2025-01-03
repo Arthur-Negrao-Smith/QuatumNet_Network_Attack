@@ -373,6 +373,7 @@ def collectDataFrame(data: dict,
     "Swapp Error Tax":[fail_tax],
     "Impossible Swapp Tax":[impossible_tax],
     "Average Attempts":[avg_attempts],
+    "Avg Fidelity Route":[data["Avg Fidelity Route"]],
     "Used Eprs":[data['Used Eprs']],
     "Black Holes":[len(data["Black Holes"])]
     }
