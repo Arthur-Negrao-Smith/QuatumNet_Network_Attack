@@ -7,14 +7,14 @@ class DataCollector:
     Args:
         dataFrame (optional): DataFrame with all simulation data
     """
-    def __init__(self, dataFrame: pd.DataFrame = None) -> None:
-        self.df: pd.DataFrame = dataFrame
-        self.standard_deviations: dict = {}
+    def __init__(self, dataFrame: pd.DataFrame | None = None) -> None:
+        self.df: pd.DataFrame | None = dataFrame
+        self.standard_deviations: dict[str, float] = {}
 
     def is_DataFrame(
             self, 
             dataFrame: pd.DataFrame
-            ) -> Exception:
+            ) -> None:
         """
         Find out if it is a DataFrame
 
@@ -29,8 +29,8 @@ class DataCollector:
 
     def get_DataFrame(
             self, 
-            dataFrame: pd.DataFrame = None, 
-            convert: bool = None
+            dataFrame: pd.DataFrame | None = None, 
+            convert: bool | None = None
             ) -> None:
         """
         Get a DataFrame to DataCollector
@@ -104,7 +104,7 @@ class DataCollector:
             
             variance /= number_items
             # Square root of variance
-            standard_deviations[column] = [variance ** 0.5]
+            standard_deviations[column] = variance ** 0.5
 
         self.standard_deviations = standard_deviations
 
@@ -113,8 +113,8 @@ class DataCollector:
     def save(
             self, 
             file_name: str, 
-            save_standard_deviation: bool = None, 
-            standard_columns: tuple = None
+            save_standard_deviation: bool | None = None, 
+            standard_columns: tuple | None = None
             ) -> None:
         """
         Will save all data from DataCollector on files
