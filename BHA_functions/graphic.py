@@ -61,7 +61,7 @@ class GraphicGenerator:
             error_bar: np.ndarray = np.array(temp_error_bar)
             plt.errorbar(x_points, y_points, yerr=error_bar, fmt='.', color=color)
 
-    def show_plot(self, title: str, x_label: str, y_label: str) -> None:
+    def show_plot(self, title: str, x_label: str, y_label: str, pdf_file: str = '', grid: bool = True) -> None:
         """
         Will show especific plot selected
 
@@ -69,6 +69,8 @@ class GraphicGenerator:
             title (required): Title of plot, if None will don't have title
             x_label (required): Label of x axis
             y_label (required): Label of y axis
+            pdf_file (optional): Name of pdf file, if don't want save as pdf, pdf_file = ""
+            grid (optional): Add a grid on the plot if is True
         """
         if title != None:
             plt.title(title)
@@ -77,5 +79,11 @@ class GraphicGenerator:
         
         plt.xlabel(x_label)
         plt.ylabel(y_label)
+
+        if grid:
+            plt.grid(True, linestyle='--', color='gray', alpha=0.5)
+
+        if pdf_file != '':
+            plt.savefig(fname=pdf_file, format='pdf', bbox_inches="tight", pad_inches=0.1)
 
         plt.show()
