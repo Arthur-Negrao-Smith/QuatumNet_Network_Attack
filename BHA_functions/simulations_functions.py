@@ -27,12 +27,9 @@ class Color:
 def initNetwork(
                 topology: str,
                 number_nodes: int,
-                rows: int, 
-                columns: int,
-                prob_edge_creation: float,
-                edges_to_attach: int,
+                topology_args: tuple,
                 simulation_log: bool = False,
-                simulator_log: bool = False
+                simulator_log: bool = False,
                 ) -> Network:
     """
     Will initiate the network
@@ -40,10 +37,7 @@ def initNetwork(
     Args:
         topology: Set network's topology
         number_nodes: If the topology is not a grade, it will be the number of nodes in the network
-        rows: Number of rows of host in the network on grade topology
-        columns: Number of columns of host in the network on grade topology
-        prob_edge_creation: Probability of edge creation on Erdős–Rényi topology
-        edges_to_attach: Number of edges to attach from a new node to existing nodes on Baraba-Albert topology
+        topology_args: Is a tuple with all args to selected the topology
         simulation_log: If True will activate logs of simulation
         simulator_log: If True will activate logs of simulator
 
@@ -55,14 +49,11 @@ def initNetwork(
 
     # Defining the topology
     topology = topology.lower()
-    if topology == 'grade':
-        network.set_ready_topology(topology, rows, columns)
-    elif topology == 'er':
-        network.set_ready_topology(topology, number_nodes, prob_edge_creation)
-    elif topology == 'ba':
-        network.set_ready_topology(topology, number_nodes, edges_to_attach)
+
+    if topology in ('grade', 'mesh', 'arvore', 'tree'):
+        network.set_ready_topology(topology, *topology_args)
     else:
-        network.set_ready_topology(topology, number_nodes)
+        network.set_ready_topology(topology, number_nodes, *topology_args)
 
     # Draw simulation
     if simulation_log:
@@ -373,8 +364,8 @@ def collectDataFrame(data: dict,
     "Swapp Error Tax":[fail_tax],
     "Impossible Swapp Tax":[impossible_tax],
     "Average Attempts":[avg_attempts],
-    "Avg Fidelity Route":[data["Avg Fidelity Route"]],
     "Used Eprs":[data['Used Eprs']],
+    "Avg Fidelity Route":[data["Avg Fidelity Route"]],
     "Black Holes":[len(data["Black Holes"])]
     }
 
@@ -385,30 +376,24 @@ def collectDataFrame(data: dict,
 def simulation(
         topology: str,
         number_nodes: int,
-        rows: int, 
-        columns: int,
-        prob_edge_creation: float = 0.5,
-        edges_to_attach: int = 2,
+        topology_args: tuple,
         entanglements_replanished: int = 10, 
         requests: int = 100,
         attempts_per_request: int = 2,
-        network_prob: float = None, 
+        network_prob: float | None = None, 
         num_black_holes: int = 1, 
-        black_hole_prob: int = None,
+        black_hole_prob: float | None = None,
         black_hole_target: bool = False,
         data_Frame_index: int = 1,
         simulation_log: bool = False,
-        simulator_log: bool = False
+        simulator_log: bool = False,
         ) -> dict:
         """Run the simulation with the desired parameters
 
             Args:
                 topology: Set network's topology
                 number_nodes: If the topology is not a grade, it will be the number of nodes in the network
-                rows: Number of rows of host in the network on grade topology
-                columns: Number of columns of host in the network on grade topology
-                prob_edge_creation: Probability of edge creation on Erdős–Rényi topology
-                edges_to_attach: Number of edges to attach from a new node to existing nodes on Baraba-Albert topology
+                *topology_args: Args of selected topology
                 entanglements_replanished: Number of entangled pair will be create to replanish network
                 requests: Number of requests in simulation
                 attempts_per_request: Number of attempts on a request
@@ -427,13 +412,10 @@ def simulation(
         # Create network
         network = initNetwork(
                               topology=topology,
-                              number_nodes=number_nodes,
-                              rows=rows, 
-                              columns=columns, 
-                              prob_edge_creation=prob_edge_creation,
-                              edges_to_attach=edges_to_attach, 
+                              number_nodes=number_nodes, 
+                              topology_args=topology_args,
                               simulation_log=simulation_log,
-                              simulator_log=simulator_log
+                              simulator_log=simulator_log,
                               )
 
         # Set real edges
@@ -510,21 +492,19 @@ def simulation(
         
         return data, data_df
 
+
 async def runSimulations(
         runs: int, 
         topology: str,
         number_nodes: int,
-        rows: int, 
-        columns: int, 
-        prob_edge_creation: float,
-        edges_to_attach: int,
+        topology_args: tuple,
         entanglements_replanished: int = 10, 
         requests: int = 100,
         attempts_per_request: int = 2,
-        network_prob: float = None, 
+        network_prob: float | None = None, 
         num_black_holes: int = 1, 
-        black_hole_prob: int = None,
-        black_hole_target: bool = False
+        black_hole_prob: float | None = None,
+        black_hole_target: bool = False,
         ) -> pd.DataFrame:
     '''
     Will run some simulations and collect data with pandas DataFrame        
@@ -533,10 +513,7 @@ async def runSimulations(
         runs: Number of times of simulation will run
         topology: Set network's topology
         number_nodes: If the topology is not a grade, it will be the number of nodes in the network
-        rows: Number of rows of host in the network on grade topology
-        columns: Number of columns of host in the network on grade topology
-        prob_edge_creation: Probability of edge creation on Erdős–Rényi topology
-        edges_to_attach: Number of edges to attach from a new node to existing nodes on Baraba-Albert topology
+        topology_args: Tuple with all args of the selected topology 
         entanglements_replanished: Number of entangled pair will be create to replanish network
         requests: Number of requests in simulation
         attempts_per_request: Number of attempts on a request
@@ -554,10 +531,7 @@ async def runSimulations(
         data, temp_data_df = simulation(
             topology=topology,
             number_nodes=number_nodes,
-            rows=rows,
-            columns=columns,
-            prob_edge_creation=prob_edge_creation,
-            edges_to_attach=edges_to_attach,
+            topology_args=topology_args,
             entanglements_replanished=entanglements_replanished,
             requests=requests,
             attempts_per_request=attempts_per_request,
@@ -566,7 +540,7 @@ async def runSimulations(
             black_hole_prob=black_hole_prob,
             black_hole_target = black_hole_target,
             data_Frame_index=run,
-            simulation_log=False
+            simulation_log=False,
             )
         if simulations_df == None:
             simulations_df = [temp_data_df]
@@ -574,6 +548,7 @@ async def runSimulations(
             simulations_df.append(temp_data_df)
 
     return pd.concat(simulations_df)
+
 
 async def asyncSimulations(number_tasks: int, **kwargs) -> DataCollector:
     """
@@ -620,17 +595,14 @@ def runSimulations_Linux(
         runs: int, 
         topology: str,
         number_nodes: int,
-        rows: int, 
-        columns: int, 
-        prob_edge_creation: float,
-        edges_to_attach: int,
+        topology_args: tuple,
         entanglements_replanished: int = 10, 
         requests: int = 100,
         attempts_per_request: int = 2,
-        network_prob: float = None, 
+        network_prob: float | None = None, 
         num_black_holes: int = 1, 
-        black_hole_prob: int = None,
-        black_hole_target: bool = False
+        black_hole_prob: float | None = None,
+        black_hole_target: bool = False,
         ) -> pd.DataFrame:
     '''
     Will run some simulations and collect data with pandas DataFrame        
@@ -639,10 +611,7 @@ def runSimulations_Linux(
         runs: Number of times of simulation will run
         topology: Set network's topology
         number_nodes: If the topology is not a grade, it will be the number of nodes in the network
-        rows: Number of rows of host in the network on grade topology
-        columns: Number of columns of host in the network on grade topology
-        prob_edge_creation: Probability of edge creation on Erdős–Rényi topology
-        edges_to_attach: Number of edges to attach from a new node to existing nodes on Baraba-Albert topology
+        topology_args: Tuple with all args of the selected topology 
         entanglements_replanished: Number of entangled pair will be create to replanish network
         requests: Number of requests in simulation
         attempts_per_request: Number of attempts on a request
@@ -654,15 +623,12 @@ def runSimulations_Linux(
     Returns:
         DataFrame: Will return pandas DataFrame with all data storage
     '''
-    simulations_df = None
+    simulations_df: list | None = None
     for run in range(0, runs):
         data, temp_data_df = simulation(
             topology=topology,
             number_nodes=number_nodes,
-            rows=rows,
-            columns=columns,
-            prob_edge_creation=prob_edge_creation,
-            edges_to_attach=edges_to_attach,
+            topology_args=topology_args,
             entanglements_replanished=entanglements_replanished,
             requests=requests,
             attempts_per_request=attempts_per_request,
@@ -671,8 +637,9 @@ def runSimulations_Linux(
             black_hole_prob=black_hole_prob,
             black_hole_target = black_hole_target,
             data_Frame_index=run,
-            simulation_log=False
+            simulation_log=False,
             )
+        
         if simulations_df == None:
             simulations_df = [temp_data_df]
         else:
@@ -680,25 +647,37 @@ def runSimulations_Linux(
 
     return pd.concat(simulations_df)
 
-def asyncSimulations_Linux(cores: int, **kwargs) -> DataCollector:
+
+def asyncSimulations_Linux(cores: int, **params) -> DataCollector:
     """
-    Will partition all simulation in async processes in Linux systems
+    Will partition all simulation in async processes
 
     Args:
         number_tasks: Number of partitions
-        **kwargs: Args of simulations
+        **params: Args of simulations
     
     Returns:
         DataCollector: DataCollector with all simulations data
     """
 
-    runs = kwargs['runs']
+    runs = params['runs']
     if runs < cores:
         cores = runs
     runs_per_task = int(runs/cores)
 
-    args = [arg for arg in kwargs.values()]
-    args[0] = runs_per_task
+    args: list = [
+        runs_per_task,
+        params['topology'],
+        params['number_nodes'],
+        params['topology_args'],
+        params['entanglements_replanished'],
+        params['requests'],
+        params['attempts_per_request'],
+        params['network_prob'],
+        params['num_black_holes'],
+        params['black_hole_prob'],
+        params['black_hole_target']
+    ]
 
     module = runs % cores
 
@@ -719,23 +698,21 @@ def asyncSimulations_Linux(cores: int, **kwargs) -> DataCollector:
 
     return DataCollector(simulations_df)
 
+
 if __name__ == "__main__":
     start = datetime.now()
     simulations_params = {
         'runs':100,
         'topology':'Ba',
         'number_nodes':20,
-        'rows':4,
-        'columns':3,
-        'prob_edge_creation':0.1,
-        'edges_to_attach':3,
+        'topology_args':(3,),
         'entanglements_replanished':10,
         'requests':100,
         'attempts_per_request':2,
         'network_prob':0.8,
         'num_black_holes':2,
         'black_hole_prob':0.1,
-        'black_hole_target':True
+        'black_hole_target':True,
     }
 
     simulations_dc = asyncSimulations_Linux(cores=12, **simulations_params)
