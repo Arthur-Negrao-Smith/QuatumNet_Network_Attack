@@ -1,7 +1,7 @@
 from quantumnet.components import Network, Host
 from quantumnet.objects import Logger, Qubit
 
-from random import randint, choice
+from random import randint, choice, uniform
 from copy import copy
 
 # For collect data
@@ -211,10 +211,10 @@ def addQubits(host_A: Host,
     """
     temp_qubit_counter = counter
     
-    qubit = Qubit(temp_qubit_counter, 1)
+    qubit = Qubit(temp_qubit_counter, uniform(0.8, 1))
     host_A.add_qubit(qubit)
 
-    qubit = Qubit(temp_qubit_counter+1, 1)
+    qubit = Qubit(temp_qubit_counter+1, uniform(0.8, 1))
     host_B.add_qubit(qubit)
 
     temp_qubit_counter += 2
