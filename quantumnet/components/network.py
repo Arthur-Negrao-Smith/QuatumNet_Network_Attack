@@ -282,45 +282,46 @@ class Network():
         
         """
         # Cria o grafo da topologia escolhida
-        topology_name: str = topology_name.lower()
-        if topology_name in ('grade', 'mesh'):
-            topology_name = 'grade'
+        topology: str = topology_name.lower()
+
+        if topology in ('grade', 'mesh'):
+            topology = 'grade'
             if len(args) != 2:
                 raise Exception('Para a topologia Grade, são necessários dois argumentos.')
             self._graph = nx.grid_2d_graph(*args)
 
-        elif topology_name in ('linha', 'line'):
-            topology_name = 'linha'
+        elif topology in ('linha', 'line'):
+            topology = 'linha'
             if len(args) != 1:
                 raise Exception('Para a topologia Linha, é necessário um argumento.')
             self._graph = nx.path_graph(*args)
 
-        elif topology_name in ('anel', 'ring'):
-            topology_name = 'anel'
+        elif topology in ('anel', 'ring'):
+            topology = 'anel'
             if len(args) != 1:
                 raise Exception('Para a topologia Anel, é necessário um argumento.')
             self._graph = nx.cycle_graph(*args)
 
-        elif topology_name in ('estrela', 'star'):
-            topology_name = 'estrela'
+        elif topology in ('estrela', 'star'):
+            topology = 'estrela'
             if len(args) != 1:
                 raise Exception('Para a topologia Estrela, é necessário um argumento.')
             self._graph = nx.star_graph(args[0] - 1) # Star graph has n-1 leaves and 1 center node
 
-        elif topology_name in ('arvore', 'tree'):
-            topology_name = 'arvore'
+        elif topology in ('arvore', 'tree'):
+            topology = 'arvore'
             if len(args) != 2:
                 raise Exception('Para a topologia Árvore, são necessários dois argumentos.')
             self._graph = self.create_tree_with_exact_nodes(*args)
 
-        elif topology_name in ('er', 'erdos-renyi'):
-            topology_name = 'er'
+        elif topology in ('er', 'erdos-renyi'):
+            topology = 'er'
             if len(args) != 2:
                 raise Exception('Para a topologia Erdős–Rényi, são necessários dois argumentos')
             self._graph = nx.erdos_renyi_graph(*args)
 
-        elif topology_name in ('ba', 'baraba-albert'):
-            topology_name = 'ba'
+        elif topology in ('ba', 'baraba-albert'):
+            topology = 'ba'
             if len(args) != 2:
                 raise Exception('Para a topologia Baraba-Albert, são necessários dois argumentos')
             self._graph = nx.barabasi_albert_graph(*args)
@@ -338,7 +339,7 @@ class Network():
                 'er':'Erdős–Rényi',
                 'ba':'Baraba-Albert'
         }
-        self._topology = topology_dict[topology_name]
+        self._topology = topology_dict[topology]
 
         # Converte os labels dos nós para inteiros
         self._graph = nx.convert_node_labels_to_integers(self._graph)
