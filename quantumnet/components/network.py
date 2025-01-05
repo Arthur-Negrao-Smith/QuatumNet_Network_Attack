@@ -224,8 +224,53 @@ class Network():
             epr = self._graph.edges[channel]['eprs'].pop(-1)   
             return epr
         except IndexError:
-            raise Exception('Não há Pares EPRs.')   
+            raise Exception('Não há Pares EPRs.')
         
+
+    def create_tree_with_exact_nodes(self, num_nodes: int, branching_factor: int) -> nx.Graph:
+        """
+        Create a tree with any number of nodes you want
+
+        Args:
+            num_nodes (int): Desired number of nodes
+            branching_factor (int): Number of children of each node
+
+        Returns:
+            nx.Graph: Tree with all nodes
+        """
+        
+        tree = nx.Graph()  # Initialize an empty graph
+        tree.add_node(0)  # Add the root node
+        
+        nodes_to_expand = [0]  # Start with the root node
+        current_node_id = 1  # Next available node ID
+
+        # Build the tree until we reach the desired number of nodes
+        while tree.number_of_nodes() < num_nodes:
+            parent = nodes_to_expand.pop(0)  # Take a node to expand
+            
+            for _ in range(branching_factor):
+                if tree.number_of_nodes() < num_nodes:
+                    tree.add_node(current_node_id)  # Add a new node
+                    tree.add_edge(parent, current_node_id)  # Connect it to the parent
+                    nodes_to_expand.append(current_node_id)  # Add new node to the expansion list
+                    current_node_id += 1
+                else:
+                    break
+
+        return tree
+
+        # Example usage
+        #branching_factor = 3  # Number of children per node
+        #num_nodes = 36  # Desired number of nodes
+
+        #tree = create_tree_with_exact_nodes(branching_factor, num_nodes)
+
+        # Visualize the tree
+        #nx.draw(tree, with_labels=True, node_color="lightblue")
+        #plt.show()
+
+    
     def set_ready_topology(self, topology_name: str, *args: int) -> str:
         """
         Cria um grafo com uma das topologias prontas para serem utilizadas. 
@@ -266,7 +311,7 @@ class Network():
             topology_name = 'arvore'
             if len(args) != 2:
                 raise Exception('Para a topologia Árvore, são necessários dois argumentos.')
-            self._graph = nx.balanced_tree(*args)
+            self._graph = self.create_tree_with_exact_nodes(*args)
 
         elif topology_name in ('er', 'erdos-renyi'):
             topology_name = 'er'

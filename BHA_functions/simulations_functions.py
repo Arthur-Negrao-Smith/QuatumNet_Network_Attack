@@ -50,8 +50,10 @@ def initNetwork(
     # Defining the topology
     topology = topology.lower()
 
-    if topology in ('grade', 'mesh', 'arvore', 'tree'):
+    if topology in ('grade', 'mesh'):
         network.set_ready_topology(topology, *topology_args)
+    elif topology in ('linha', 'line', 'estrela', 'star', 'anel', 'ring'):
+        network.set_ready_topology(topology, number_nodes)
     else:
         network.set_ready_topology(topology, number_nodes, *topology_args)
 
@@ -209,10 +211,10 @@ def addQubits(host_A: Host,
     """
     temp_qubit_counter = counter
     
-    qubit = Qubit(temp_qubit_counter)
+    qubit = Qubit(temp_qubit_counter, 1)
     host_A.add_qubit(qubit)
 
-    qubit = Qubit(temp_qubit_counter+1)
+    qubit = Qubit(temp_qubit_counter+1, 1)
     host_B.add_qubit(qubit)
 
     temp_qubit_counter += 2
