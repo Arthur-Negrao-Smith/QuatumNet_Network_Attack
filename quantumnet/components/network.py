@@ -317,13 +317,13 @@ class Network():
         elif topology in ('er', 'erdos-renyi'):
             topology = 'er'
             if len(args) != 2:
-                raise Exception('Para a topologia Erdős–Rényi, são necessários dois argumentos')
+                raise Exception('Para a topologia Erdős-Rényi, são necessários dois argumentos')
             self._graph = nx.erdos_renyi_graph(*args)
 
-        elif topology in ('ba', 'baraba-albert'):
+        elif topology in ('ba', 'barabasi-albert'):
             topology = 'ba'
             if len(args) != 2:
-                raise Exception('Para a topologia Baraba-Albert, são necessários dois argumentos')
+                raise Exception('Para a topologia Barabási-Albert, são necessários dois argumentos')
             self._graph = nx.barabasi_albert_graph(*args)
 
         else:
@@ -336,8 +336,8 @@ class Network():
                 'anel':'Anel',
                 'estrela':'Estrela',
                 'arvore':'Árvore',
-                'er':'Erdős–Rényi',
-                'ba':'Baraba-Albert'
+                'er':'Erdős-Rényi',
+                'ba':'Barabási-Albert'
         }
         self._topology = topology_dict[topology]
 
