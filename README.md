@@ -2,7 +2,12 @@
 
 ## Visão Geral
 Esse repositório tem como objetivo estudar o comportamento de Black Holes Attacks em redes quânticas. Ele comporta experimentos de diferentes métricas e topologias afim de encontrar suas características em cenários distintos.
-Esse repositório foi criado com o objetivo de rodar as simulações em sistemas linux, logo, sistemas diferentes deste tendem a não funcionar.
+
+## Avisos
+
+- Esse repositório foi criado com o objetivo de rodar as simulações em sistemas linux, logo, sistemas diferentes deste tendem a não funcionar.
+- As simulações são feitas para serem rodadas em paralelo o que pode estressar consideravelmente algumas máquinas com menos processamento.
+- As simulações demandam muitos cálculos e muitas repetições, por isso elas tendem a demorar um tempo demasiadamente longo.
 
 ## Quantumnet
 
@@ -24,7 +29,7 @@ O repositório contém os diretórios: BHA_functions, Examples, Graphics, Simula
 
 ## Diretórios das Simulações
 
-- ``BHA_functions``: Onde ficam as funções principais das simulações
+- ``BHA_functions``: Diretório onde abriga as funções principais das simulações
 - ``Examples``: Diretório com exemplos de funcionamento das simulações
 - ``Graphics``: Diretório voltado a guardar os gráficos dos experimentos
 - ``Simulations``: Diretório encarregado de guardar as simulações
