@@ -23,11 +23,19 @@ O repositório inclui os componentes essenciais da rede e do host, além dos qub
   - ``/layers`` : arquivos que contém as camadas para o funciomento básico da rede.
   - ``/objects`` : elementos essenciais para a funcionamento dos componentes.
 
-## Descrição das Simulações
+## Simulações 
+
+### Descrição das Simulações
+
+As simulação são divididas em Default simulations e Topology simulations, cada uma com o propósito diferente.
+
+As Default simulations exploram o comportamento do ataque em redes de grade e estuda prioritariamente as métricas do ataque de acordo com o aumento da intensidade.
+
+As Topology simulations focam em como as redes de diferentes topologias reagem ao ataque conforme aumentamos a quantidade de nós.
+
+### Diretórios das Simulações
 
 O repositório contém os diretórios: BHA_functions, Examples, Graphics, Simulations e Simulations_Data. Sendo cada um deles necessário para uma função específica dentro das simulações.
-
-## Diretórios das Simulações
 
 - ``BHA_functions``: Diretório onde abriga as funções principais das simulações
 - ``Examples``: Diretório com exemplos de funcionamento das simulações
